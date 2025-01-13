@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange Rates</title>
+</head>
+
+<body>
+    <h1>Exchange Rates</h1>
+    <label for="currency">Enter Currency Code (e.g., EUR, GBP):</label>
+    <input type="text" id="currency" />
+    <button id="check-rate">Check Rate</button>
+    <p id="result"></p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const apiURL = "https://api.exchangerate-api.com/v4/latest/USD";
+
+            fetch(apiURL)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+
+                    // Set up event listener for the button
+                    document.querySelector("#check-rate").onclick = function () {
+                        const currency = document.querySelector("#currency").value.toUpperCase();
+                        const rate = data.rates[currency];
+
+                        if (rate !== undefined) {
+                            // Display exchange rate on the screen
+                            document.querySelector('#result').innerHTML = `1 USD is equal to ${rate.toFixed(3)} ${currency}.`;
+                        } else {
+                            // Display error on the screen
+                            document.querySelector('#result').innerHTML = 'Invalid Currency.';
+                        }
+                    };
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.querySelector('#result').innerHTML = 'Error fetching data. Please try again later.';
+                });
+        });
+    </script>
+</body>
+
+</html>
